@@ -1,0 +1,169 @@
+---
+title: "WEEK_2_uploading_data"
+author: "Kevin Healy"
+date: "2023-08-28"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# Uploading data and packages
+
+In this script you will upload some data that is in the form of a .csv file,
+download and load in some packages. USe this file to help you with the weekly 
+workbook.
+
+
+## Downloading packages.
+
+Its a good idea to load all of the packages you plan to use at the start to 
+keep eveything nice a tidy. 
+
+For this session we are going to download the 
+package 'pageviews' which will download the number of wiki views for a given
+page input (note you will need the internet to use this), ... 
+
+
+```{r packages}
+#This line will download the package from CRAN. You only need to do this
+#once so next time you open R you only need to use the library() line.
+
+#Remove the # when running this line 
+# install.packages("pageviews")
+
+#This line will download the package from CRAN.
+library(pageviews)
+
+
+```
+
+We will now use this package to capture some pageview data for wikipedia. 
+Lets do it for the little blue macaw (Cyanopsitta spixii) which you might know 
+better as the parrot from the Disney movie Rio. Lets track daily page views 
+between 2016 and 2023 using the code below
+
+
+
+```{r wiki}
+
+#This code will download the page views for Cyanopsitta spixii
+#and save it as a dataframe object.
+wiki_data <- article_pageviews(project = "en.wikipedia", 
+                               article = "Cyanopsitta spixii",
+                               start = as.Date('2018-01-01'),
+                               end = as.Date("2023-01-01"),
+                               user_type = c("user"),
+                               platform = "all",
+                               granularity = "daily"
+                             )
+
+```
+
+The data is saved as a data.frame so we can use the row column formate
+of wiki_data[,] like in last weeks datasets. To see the first 10 lines we can 
+also use head() were we will see the column names such as data and views.
+
+```{r head}
+
+head(wiki_data)
+
+```
+
+We can now ask things like what is the mean number of daily views, etc.
+
+```{r mean}
+
+mean(wiki_data$views)
+
+```
+
+We can also plot the data (more on this next week) using the below code. What do 
+you think happened towards the end of 2018?
+
+```{r plot}
+
+plot(wiki_data$views ~ wiki_data$date)
+
+```
+
+
+## Uploading data
+
+From CANVAS download the file names lifespan_data_28_8_2023.xls and save it as 
+a .csv in a folder on your computer. Make sure the name of the file matches the
+name below and that you have set your working directory to the folder with the
+file in it.
+
+If it works you should see it appear in the environment in the top right panel
+but nothing will happen in the console.
+
+
+```{r read in data}
+
+lifespan_data <- read.csv("lifespan_data_28_8_2023.csv",
+                          header = T,
+                          sep = ",")
+
+```
+
+This dataset is from a paper testing how a species ecology might drive thier 
+lifespan (See paper here 
+https://royalsocietypublishing.org/doi/full/10.1098/rspb.2014.0298).
+
+
+
+```{r dollar}
+
+head(lifespan_data)
+
+```
+
+Like before you can subset the dataset using either square brackets
+lifespan_data[,] or the dollar sign lifespan_data$
+
+Lets subset the data to just flying (volant) species and calculate the mean
+
+```{r mean volant}
+#Do it using brackets
+mean(lifespan_data[lifespan_data$volancy == "volant", "maximum_lifespan_yr"])
+
+#We could also do it this way using the dolar sign
+mean(lifespan_data[lifespan_data$volancy == "volant", ]$maximum_lifespan_yr)
+
+
+```
+
+We can also use arguments like the greater than sign to ask for animals larger
+that a certain size. In this case we will do it for animals greater than 100g
+
+```{r mean mass}
+
+#save an object with just the volant species
+mean(lifespan_data[lifespan_data$mass_g > 100, "maximum_lifespan_yr"])
+
+```
+
+Remember you can save objects such as subsets of a data.frame. For example, we
+can save two subset of the main dataset, one for mammals and one for Aves in 
+order to make it a little easier to do further subsetting.
+
+```{r mean aves mammal mass}
+
+#subset to just mammals and save it as Mammal_data
+Mammal_data <- lifespan_data[lifespan_data$class == "Mammalia",]
+
+#Lets calculate mean body mass of nocturnal mammals body mass 
+mean(Mammal_data[Mammal_data$daily_activity == "nocturnal", "mass_g"])
+
+
+#subset to just aves and save it as Aves_data
+Aves_data <- lifespan_data[lifespan_data$class == "Aves",]
+
+#Lets calculate mean body mass of nocturnal aves body mass 
+mean(Aves_data[Aves_data$daily_activity == "nocturnal", "mass_g"])
+```
+
+
+
+
+

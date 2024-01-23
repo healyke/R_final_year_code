@@ -1,0 +1,7 @@
+﻿species,time_min,dose_percent_venom,alive,dead
+cricket,1440,0.1,20,0
+cricket,1440,1,17,3
+cricket,1440,2,13,7
+cricket,1440,4,6,14
+cricket,1440,6,2,18
+cricket,1440,10,0,20
